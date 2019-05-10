@@ -8,7 +8,6 @@ find_package(catkin REQUIRED COMPONENTS
 	rospy 
 	std_msgs
 	sensor_msgs
-	dji_sdk
 )
 
 find_package(gazebo REQUIRED)

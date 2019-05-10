@@ -4,7 +4,7 @@
   <version>0.0.0</version>
   <description>The dji_m100_gazebo package</description>
 
-  <maintainer email="caochao39@gmail.com">Cao Chao</maintainer>
+  <maintainer email="tahsincankose@gmail.com">Tahsincan Kose</maintainer>
 
   <license>MIT</license>
 
@@ -14,10 +14,6 @@
   <depend>gazebo_ros</depend>
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
-  <depend>dji_sdk</depend>
-  <!-- The export tag contains other, unspecified, tags -->
   <export>
-    <!-- Other tools can request additional information be placed here -->
-
   </export>
 </package>
