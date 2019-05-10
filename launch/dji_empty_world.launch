@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<launch>
+	<arg name="verbose" default="true"/>
+	<include file="$(find dji_m100_gazebo)/launch/start.launch">
+		<arg name="verbose" value="$(arg verbose)"/>
+	</include>
+	<include file="$(find dji_m100_gazebo)/launch/spawn_drones.launch" />
+	<!--node pkg="dji_m100_gazebo" name="publisher" type="publisher.py" output="screen"/-->
+	<!--node pkg="dji_m100_gazebo" name="subscriber" type="subscriber.py" output="screen"/-->
+</launch>

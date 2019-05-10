@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>dji_m100_gazebo</name>
+  <version>0.0.0</version>
+  <description>The dji_m100_gazebo package</description>
+
+  <maintainer email="caochao39@gmail.com">Cao Chao</maintainer>
+
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>roscpp</depend>
+  <depend>gazebo_ros</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>dji_sdk</depend>
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
