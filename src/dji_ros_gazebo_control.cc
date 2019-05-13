@@ -29,6 +29,11 @@
 
 #include <dji_m100_gazebo/pid.h>
 
+#if GAZEBO_MAJOR_VERSION >= 8
+namespace math = ignition::math;
+#else
+namespace math = gazebo::math;
+#endif
 // Copied from dji_sdk.h
 enum M100FlightStatus{
     ON_GROUND = 1,
@@ -92,10 +97,14 @@ namespace gazebo
                 if(_sdf->HasElement("motionSmallNoise")) this->motion_small_noise = _sdf->GetElement("motionSmallNoise")->Get<double>();
                 if(_sdf->HasElement("motionDriftNoise")) this->motion_drift_noise = _sdf->GetElement("motionDriftNoise")->Get<double>();
                 if(_sdf->HasElement("motionDriftNoiseTime")) this->motion_drift_noise_time = _sdf->GetElement("motionDriftNoiseTime")->Get<double>();
-                
-                this->inertia = this->base_link->GetInertial()->PrincipalMoments();
-                this->mass = this->base_link->GetInertial()->Mass();
-                
+
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    this->inertia = this->base_link->GetInertial()->PrincipalMoments();
+                    this->mass = this->base_link->GetInertial()->Mass();
+                #else
+                    this->inertia = this->base_link->GetInertial()->GetPrincipalMoments();
+                    this->mass = this->base_link->GetInertial()->GetMass();
+                #endif
                 this->controllers_.roll.Load(_sdf, "rollpitch");
                 this->controllers_.pitch.Load(_sdf, "rollpitch");
                 this->controllers_.yaw.Load(_sdf, "yaw");
@@ -112,9 +121,15 @@ namespace gazebo
             // Acceleration can be computed with simulation-based variables.
             void imuCallback(const sensor_msgs::Imu::ConstPtr& imu)
             {
-                this->pose.Rot().Set(-imu->orientation.w, -imu->orientation.x, imu->orientation.y, imu->orientation.z);
-                euler = this->pose.Rot().Euler();
-                angular_velocity = this->pose.Rot().RotateVector(ignition::math::Vector3d(imu->angular_velocity.x, imu->angular_velocity.y, imu->angular_velocity.z));
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    this->pose.Rot().Set(-imu->orientation.w, -imu->orientation.x, imu->orientation.y, imu->orientation.z);
+                    this->euler = this->pose.Rot().Euler();
+                    this->angular_velocity = this->pose.Rot().RotateVector(math::Vector3d(imu->angular_velocity.x, imu->angular_velocity.y, imu->angular_velocity.z));
+                #else
+                    this->pose.rot.Set(-imu->orientation.w, -imu->orientation.x, imu->orientation.y, imu->orientation.z);
+                    this->euler = this->pose.rot.GetAsEuler();
+                    this->angular_velocity = this->pose.rot.RotateVector(math::Vector3d(imu->angular_velocity.x, imu->angular_velocity.y, imu->angular_velocity.z));
+                #endif
             }
             void flightStatusCallback(const std_msgs::UInt8::ConstPtr& flight_status)
             {
@@ -131,12 +146,19 @@ namespace gazebo
                 this->velocity_command.angular.x = 0;
                 this->velocity_command.angular.y = 0;
                 this->velocity_command.angular.z = 0;
-
-                static common::Time last_sim_time = this->world->SimTime();
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    static common::Time last_sim_time = this->world->SimTime();
+                #else
+                    static common::Time last_sim_time = this->world->GetSimTime();
+                #endif
                 static double time_counter_for_drift_noise = 0;
                 static double drift_noise[4] = {0.0, 0.0, 0.0, 0.0};
                 // Get simulator time
-                common::Time cur_sim_time = this->world->SimTime();
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    common::Time cur_sim_time = this->world->SimTime();
+                #else
+                    common::Time last_sim_time = this->world->GetSimTime();
+                #endif
                 double dt = (cur_sim_time - last_sim_time).Double();
                 // save last time stamp
                 last_sim_time = cur_sim_time;
@@ -159,8 +181,13 @@ namespace gazebo
             }
             void localPositionCallback(const geometry_msgs::PointStamped::ConstPtr& position_msg)
             {
-                ignition::math::Vector3d old_position(this->pose.Pos());
-                this->pose.Pos().Set(position_msg->point.x,-position_msg->point.y,position_msg->point.z);    
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    math::Vector3d old_position(this->pose.Pos());
+                    this->pose.Pos().Set(position_msg->point.x,-position_msg->point.y,position_msg->point.z);    
+                #else
+                    math::Vector3d old_position(this->pose.pos);
+                    this->pose.pos.Set(position_msg->point.x,-position_msg->point.y,position_msg->point.z);    
+                #endif
             }
             void reset()
             {
@@ -171,8 +198,8 @@ namespace gazebo
                 this->controllers_.velocity_y.reset();
                 this->controllers_.velocity_z.reset();
 
-                this->base_link->SetForce(ignition::math::Vector3d(0,0,0));
-                this->base_link->SetTorque(ignition::math::Vector3d(0,0,0));
+                this->base_link->SetForce(math::Vector3d(0,0,0));
+                this->base_link->SetTorque(math::Vector3d(0,0,0));
 
                 // reset state
                 this->pose.Reset();
@@ -191,7 +218,11 @@ namespace gazebo
             void OnUpdate(){
                 this->callback_queue.callAvailable();
                 // Get simulator time
-                common::Time sim_time = this->world->SimTime();
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    common::Time sim_time = this->world->SimTime();
+                #else
+                    common::Time sim_time = this->world->GetSimTime();
+                #endif
                 double dt = (sim_time - this->last_time).Double();
                 if (dt == 0.0) return;
                 UpdateState(dt);
@@ -199,9 +230,13 @@ namespace gazebo
                 
                 // save last time stamp
                 this->last_time = sim_time;   
-                
-                ignition::math::Pose3d gimbal_pose = this->gimbal_yaw_link->WorldPose();
-                gimbal_pose.Set(gimbal_pose.Pos(),this->gimbal_orientation);
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    math::Pose3d gimbal_pose = this->gimbal_yaw_link->WorldPose();
+                    gimbal_pose.Set(gimbal_pose.Pos(),this->gimbal_orientation);
+                #else
+                    math::Pose3d gimbal_pose = this->gimbal_yaw_link->GetWorldPose();
+                    gimbal_pose.Set(gimbal_pose.pos,this->gimbal_orientation);
+                #endif
                 this->gimbal_yaw_link->SetWorldPose(gimbal_pose);
             }
             void UpdateState(double dt)
@@ -223,57 +258,101 @@ namespace gazebo
             }
             void UpdateDynamics(double dt)
             {
-                ignition::math::Vector3d force, torque;
+                math::Vector3d force, torque;
                 // Use Gazebo for states
-                this->pose = this->base_link->WorldPose();
-                this->angular_velocity = this->base_link->WorldAngularVel();
-                this->euler = pose.Rot().Euler();    
-                this->acceleration = (this->base_link->WorldLinearVel() - this->linear_velocity) / dt;
-                this->linear_velocity = this->base_link->WorldLinearVel();
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    this->pose = this->base_link->WorldPose();
+                    this->angular_velocity = this->base_link->WorldAngularVel();
+                    this->euler = pose.Rot().Euler();    
+                    this->acceleration = (this->base_link->WorldLinearVel() - this->linear_velocity) / dt;
+                    this->linear_velocity = this->base_link->WorldLinearVel();
+                #else
+                    this->pose = this->base_link->GetWorldPose();
+                    this->angular_velocity = this->base_link->GetWorldAngularVel();
+                    this->euler = this->pose.rot.GetAsEuler();
+                    this->acceleration = (this->base_link->GetWorldLinearVel() - this->linear_velocity) / dt;
+                    this->linear_velocity = this->base_link->GetWorldLinearVel();
+                #endif
                 // .............
                 //convert the acceleration and velocity into the body frame
-                ignition::math::Vector3d body_vel = this->pose.Rot().RotateVector(this->linear_velocity);
-                ignition::math::Vector3d body_acc = this->pose.Rot().RotateVector(this->acceleration);
-                
-                ignition::math::Vector3d poschange = this->pose.Pos() - this->position;
-                this->position = pose.Pos();
-                // Get gravity
-                ignition::math::Vector3d gravity_body = this->pose.Rot().RotateVector(this->world->Gravity());
-                double gravity = gravity_body.Length();
-                double load_factor = gravity * gravity / this->world->Gravity().Dot(gravity_body);  // Get gravity
-            
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    math::Vector3d body_vel = this->pose.Rot().RotateVector(this->linear_velocity);
+                    math::Vector3d body_acc = this->pose.Rot().RotateVector(this->acceleration);
+                    math::Vector3d poschange = this->pose.Pos() - this->position;
+                    this->position = pose.Pos();
+                    // Get gravity
+                    math::Vector3d gravity_body = this->pose.Rot().RotateVector(this->world->Gravity());
+                    double gravity = gravity_body.Length();
+                #else
+                    math::Vector3d body_vel = this->pose.rot.RotateVector(this->linear_velocity);
+                    math::Vector3d body_acc = this->pose.rot.RotateVector(this->acceleration);
+                    math::Vector3d poschange = this->pose.pos - this->position;
+                    this->position = pose.pos;
+                    // Get gravity
+                    math::Vector3d gravity_body = this->pose.rot.RotateVector(this->world->Gravity());
+                    double gravity = gravity_body.GetLength();
+                   
+                #endif
+                 double load_factor = gravity * gravity / this->world->Gravity().Dot(gravity_body);  // Get gravity
                 // Rotate vectors to coordinate frames relevant for control
-                ignition::math::Quaterniond heading_quaternion(cos(this->euler.Z()/2),0,0,sin(this->euler.Z()/2));
-                ignition::math::Vector3d velocity_xy = heading_quaternion.RotateVectorReverse(this->linear_velocity);
-                ignition::math::Vector3d acceleration_xy = heading_quaternion.RotateVectorReverse(this->acceleration);
-                ignition::math::Vector3d angular_velocity_body = this->pose.Rot().RotateVectorReverse(this->angular_velocity);
-            
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    math::Quaterniond heading_quaternion(cos(this->euler.Z()/2),0,0,sin(this->euler.Z()/2));
+                #else
+                    math::Quaterniond heading_quaternion(cos(this->euler.z/2),0,0,sin(this->euler.z/2));
+                #endif
+
+                math::Vector3d velocity_xy = heading_quaternion.RotateVectorReverse(this->linear_velocity);
+                math::Vector3d acceleration_xy = heading_quaternion.RotateVectorReverse(this->acceleration);
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    math::Vector3d angular_velocity_body = this->pose.Rot().RotateVectorReverse(this->angular_velocity);
+                #else
+                    math::Vector3d angular_velocity_body = this->pose.rot.RotateVectorReverse(this->angular_velocity);
+                #endif
                 force.Set(0.0, 0.0, 0.0);
                 torque.Set(0.0, 0.0, 0.0);
                 
                 
                 if(this->flight_state == M100FlightStatus::IN_AIR )
                 {
-                    //hovering
-                    double pitch_command =  this->controllers_.velocity_x.update(this->velocity_command.linear.x, velocity_xy.X(), acceleration_xy.X(), dt) / gravity;
-                    double roll_command  = -this->controllers_.velocity_y.update(this->velocity_command.linear.y, velocity_xy.Y(), acceleration_xy.Y(), dt) / gravity;
-                    torque.X() = inertia.X() *  controllers_.roll.update(roll_command, euler.X(), angular_velocity_body.X(), dt);
-                    torque.Y() = inertia.Y() *  controllers_.pitch.update(pitch_command, euler.Y(), angular_velocity_body.Y(), dt);
+                    #if GAZEBO_MAJOR_VERSION >= 8
+                        double pitch_command =  this->controllers_.velocity_x.update(this->velocity_command.linear.x, velocity_xy.X(), acceleration_xy.X(), dt) / gravity;
+                        double roll_command  = -this->controllers_.velocity_y.update(this->velocity_command.linear.y, velocity_xy.Y(), acceleration_xy.Y(), dt) / gravity;
+                        torque.X() = inertia.X() *  controllers_.roll.update(roll_command, euler.X(), angular_velocity_body.X(), dt);
+                        torque.Y() = inertia.Y() *  controllers_.pitch.update(pitch_command, euler.Y(), angular_velocity_body.Y(), dt);
+                    #else
+                        double pitch_command =  this->controllers_.velocity_x.update(this->velocity_command.linear.x, velocity_xy.x, acceleration_xy.x, dt) / gravity;
+                        double roll_command  = -this->controllers_.velocity_y.update(this->velocity_command.linear.y, velocity_xy.y, acceleration_xy.y, dt) / gravity;
+                        torque.x = inertia.x *  controllers_.roll.update(roll_command, euler.x, angular_velocity_body.x, dt);
+                        torque.y = inertia.y *  controllers_.pitch.update(pitch_command, euler.y, angular_velocity_body.y, dt);
+                    #endif
                 }
                 else
                 {
-                    torque.X() = inertia.X() *  controllers_.roll.update(this->velocity_command.angular.x, euler.X(), angular_velocity_body.X(), dt);
-                    torque.Y() = inertia.Y() *  controllers_.pitch.update(this->velocity_command.angular.y, euler.Y(), angular_velocity_body.Y(), dt);
+                    #if GAZEBO_MAJOR_VERSION >= 8
+                        torque.X() = inertia.X() *  controllers_.roll.update(this->velocity_command.angular.x, euler.X(), angular_velocity_body.X(), dt);
+                        torque.Y() = inertia.Y() *  controllers_.pitch.update(this->velocity_command.angular.y, euler.Y(), angular_velocity_body.Y(), dt);
+                    #else
+                        torque.x = inertia.x *  controllers_.roll.update(this->velocity_command.angular.x, euler.x, angular_velocity_body.x, dt);
+                        torque.y = inertia.y *  controllers_.pitch.update(this->velocity_command.angular.y, euler.y, angular_velocity_body.y, dt);
+                    #endif
                 }
-
-                torque.Z() = inertia.Z() *  controllers_.yaw.update(this->velocity_command.angular.z, angular_velocity.Z(), 0, dt);
-                double pid_update = controllers_.velocity_z.update(this->velocity_command.linear.z,  this->linear_velocity.Z(), this->acceleration.Z(), dt);
-                force.Z()  = mass      * (pid_update + load_factor * gravity);
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    torque.Z() = inertia.Z() *  controllers_.yaw.update(this->velocity_command.angular.z, angular_velocity.Z(), 0, dt);
+                    double pid_update = controllers_.velocity_z.update(this->velocity_command.linear.z,  this->linear_velocity.Z(), this->acceleration.Z(), dt);
+                    force.Z()  = mass      * (pid_update + load_factor * gravity);
+                    if (this->max_force > 0.0 && force.Z() > this->max_force) force.Z() = this->max_force;
+                    if (force.Z() < 0.0) force.Z() = 0.0;
+                #else
+                    torque.z = inertia.z *  controllers_.yaw.update(this->velocity_command.angular.z, angular_velocity.z, 0, dt);
+                    double pid_update = controllers_.velocity_z.update(this->velocity_command.linear.z,  this->linear_velocity.z, this->acceleration.z, dt);
+                    force.z  = mass      * (pid_update + load_factor * gravity);
+                    if (this->max_force > 0.0 && force.z > this->max_force) force.z = this->max_force;
+                    if (force.z < 0.0) force.z = 0.0;
+                #endif
 
 
                 
-                if (this->max_force > 0.0 && force.Z() > this->max_force) force.Z() = this->max_force;
-                if (force.Z() < 0.0) force.Z() = 0.0;
+                
                 // process robot state information
                 if(this->flight_state == M100FlightStatus::LANDED || this->flight_state == M100FlightStatus::ON_GROUND)
                 {
@@ -303,11 +382,11 @@ namespace gazebo
             physics::LinkPtr base_link,gimbal_yaw_link;
             event::ConnectionPtr update_connection;
 
-            ignition::math::Pose3d pose;
-            ignition::math::Vector3d linear_velocity,angular_velocity,acceleration,position;
+            math::Pose3d pose;
+            math::Vector3d linear_velocity,angular_velocity,acceleration,position;
             geometry_msgs::Twist velocity_command;
-            ignition::math::Vector3d gimbal_orientation;
-            ignition::math::Vector3d euler;
+            math::Vector3d gimbal_orientation;
+            math::Vector3d euler;
 
             ros::Subscriber imu_subscriber;
             ros::Subscriber velocity_subscriber;
@@ -317,7 +396,7 @@ namespace gazebo
 
             double max_force, motion_small_noise, motion_drift_noise, motion_drift_noise_time;
 
-            ignition::math::Vector3d inertia;
+            math::Vector3d inertia;
             double mass;
 
             struct Controllers {
