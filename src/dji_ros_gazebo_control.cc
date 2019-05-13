@@ -140,8 +140,8 @@ namespace gazebo
             }
             void velocityCallback(const geometry_msgs::Vector3Stamped::ConstPtr& velocity_msg)
             {
-                this->velocity_command.linear.x = velocity_msg->vector.x;
-                this->velocity_command.linear.y = velocity_msg->vector.y;
+                this->velocity_command.linear.x = velocity_msg->vector.y;
+                this->velocity_command.linear.y = -velocity_msg->vector.x;
                 this->velocity_command.linear.z = velocity_msg->vector.z;
                 this->velocity_command.angular.x = 0;
                 this->velocity_command.angular.y = 0;
