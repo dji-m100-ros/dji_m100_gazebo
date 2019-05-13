@@ -43,6 +43,11 @@ enum M100FlightStatus{
     LANDED = 5
 };
 
+enum CoordinateMode{
+    XYZ = 0,
+    GPS = 1
+};
+
 namespace gazebo
 {
     class DJI_ROS_ControlPlugin : public ModelPlugin{
@@ -92,12 +97,20 @@ namespace gazebo
                 this->motion_small_noise = 0;
                 this->motion_drift_noise = 0;
                 this->motion_drift_noise_time = 1.0;
+                this->mode = 0;
 
                 if(_sdf->HasElement("maxForce")) this->max_force = _sdf->GetElement("maxForce")->Get<double>();
                 if(_sdf->HasElement("motionSmallNoise")) this->motion_small_noise = _sdf->GetElement("motionSmallNoise")->Get<double>();
                 if(_sdf->HasElement("motionDriftNoise")) this->motion_drift_noise = _sdf->GetElement("motionDriftNoise")->Get<double>();
                 if(_sdf->HasElement("motionDriftNoiseTime")) this->motion_drift_noise_time = _sdf->GetElement("motionDriftNoiseTime")->Get<double>();
+                if(_sdf->HasElement("mode")) this->mode = _sdf->GetElement("mode")->Get<int>();
 
+                if(this->mode == 1)
+                {
+                    this->spherical_coordinates_handle = this->world->SphericalCoords();
+                    std::cout<<"\033[1;32m Latitude reference : "<<this->spherical_coordinates_handle->LatitudeReference().Degree()<<"\033[0m\n";
+                    std::cout<<"\033[1;32m Longitude reference : "<<this->spherical_coordinates_handle->LongitudeReference().Degree()<<"\033[0m\n";
+                }
                 #if GAZEBO_MAJOR_VERSION >= 8
                     this->inertia = this->base_link->GetInertial()->PrincipalMoments();
                     this->mass = this->base_link->GetInertial()->Mass();
@@ -380,6 +393,7 @@ namespace gazebo
             physics::WorldPtr world;
             physics::ModelPtr model;
             physics::LinkPtr base_link,gimbal_yaw_link;
+            common::SphericalCoordinatesPtr spherical_coordinates_handle;
             event::ConnectionPtr update_connection;
 
             math::Pose3d pose;
@@ -409,6 +423,7 @@ namespace gazebo
             } controllers_;
 
             int flight_state;
+            int mode;
             ros::CallbackQueue callback_queue;
             common::Time last_time;
             double m_timeAfterCmd;
