@@ -20,6 +20,8 @@
 #include <geometry_msgs/QuaternionStamped.h>
 
 #include <sensor_msgs/Imu.h>
+#include <sensor_msgs/NavSatFix.h>
+
 #include <tf/LinearMath/Quaternion.h>
 #include <tf/LinearMath/Matrix3x3.h>
 #include <tf/LinearMath/Vector3.h>
@@ -75,12 +77,18 @@ namespace gazebo
                     ros::VoidPtr(), &this->callback_queue);
                 this->imu_subscriber = nh.subscribe(imu_ops);
 
-                ros::SubscribeOptions pos_ops = ros::SubscribeOptions::create<geometry_msgs::PointStamped>(
+                ros::SubscribeOptions local_pos_ops = ros::SubscribeOptions::create<geometry_msgs::PointStamped>(
                     "dji_sdk/local_position", 1000,
                     boost::bind(&DJI_ROS_ControlPlugin::localPositionCallback, this, _1),
                     ros::VoidPtr(), &this->callback_queue);
-                this->local_position_subscriber = nh.subscribe(pos_ops);
+                this->local_position_subscriber = nh.subscribe(local_pos_ops);
                 
+                ros::SubscribeOptions gps_position_ops = ros::SubscribeOptions::create<sensor_msgs::NavSatFix>(
+                    "dji_sdk/gps_position",1000,
+                    boost::bind(&DJI_ROS_ControlPlugin::gpsCallback,this,_1),
+                    ros::VoidPtr(),&this->callback_queue);
+                this->gps_position_subscriber = nh.subscribe(gps_position_ops);
+
                 ros::SubscribeOptions gimbal_ops = ros::SubscribeOptions::create<geometry_msgs::Vector3Stamped>(
                     "dji_sdk/gimbal_angle", 1000,
                     boost::bind(&DJI_ROS_ControlPlugin::gimbalOrientationCallback, this, _1),
@@ -200,6 +208,21 @@ namespace gazebo
                 #else
                     math::Vector3d old_position(this->pose.pos);
                     this->pose.pos.Set(position_msg->point.x,-position_msg->point.y,position_msg->point.z);    
+                #endif
+            }
+            void gpsCallback(const sensor_msgs::NavSatFix::ConstPtr& gps_msg)
+            {
+                double lat = gps_msg->latitude;
+                double lon = gps_msg->longitude;
+                double alt = gps_msg->altitude;
+                math::Vector3d local_position = this->spherical_coordinates_handle->LocalFromSpherical(math::Vector3d(lat,lon,alt));
+                
+                #if GAZEBO_MAJOR_VERSION >= 8
+                    math::Vector3d old_position(this->pose.Pos());
+                    this->pose.Pos().Set(local_position.X(),-local_position.Y(),local_position.Z());    
+                #else
+                    math::Vector3d old_position(this->pose.pos);
+                    this->pose.pos.Set(local_position.x,-local_position.y,local_position.z);    
                 #endif
             }
             void reset()
@@ -405,6 +428,7 @@ namespace gazebo
             ros::Subscriber imu_subscriber;
             ros::Subscriber velocity_subscriber;
             ros::Subscriber local_position_subscriber;
+            ros::Subscriber gps_position_subscriber;
             ros::Subscriber gimbal_orientation_subscriber;
             ros::Subscriber flight_status_subscriber;
 
