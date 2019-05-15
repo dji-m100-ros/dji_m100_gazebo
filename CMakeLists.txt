@@ -14,18 +14,18 @@ find_package(gazebo REQUIRED)
 catkin_package(
 	CATKIN_DEPENDS roscpp gazebo_ros
 	LIBRARIES dji_ros_gazebo_control
-	INCLUDE_DIRS include
+	INCLUDE_DIRS
 )
 
 include_directories(
-	include ${catkin_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}
+	${catkin_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}
 )
 
 link_directories(
 	${GAZEBO_LIRARY_DIRS} ${catkin_LIBRARY_DIRS}
 )
 
-add_library(dji_ros_gazebo_control SHARED src/pid.cpp src/dji_ros_gazebo_control.cc)
+add_library(dji_ros_gazebo_control SHARED src/dji_ros_gazebo_control.cc)
 target_link_libraries(dji_ros_gazebo_control ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 
 if(CMAKE_RELEASE_PREFIX STREQUAL "release")
