@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="default">
+    <scene>
+        <sky>
+            <sunset>20</sunset>
+        </sky>
+    </scene>
+    <spherical_coordinates>
+        <surface_model>EARTH_WGS84</surface_model>
+        <world_frame_orientation>ENU</world_frame_orientation>
+        <latitude_deg>32.776</latitude_deg>
+        <longitude_deg>39.2314</longitude_deg>
+        <elevation>0</elevation>
+        <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <!-- A ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <population name="wall_population">
+      <model name="wall">
+        <include>
+          <static>true</static>
+          <uri>model://closed_green_wall</uri>
+        </include>
+      </model>
+      <pose>0 0 2.25 0 0 0</pose>
+      <distribution>
+        <type>grid</type>
+        <rows>5</rows>
+        <cols>4</cols>
+        <step>15 15 0</step>
+      </distribution>
+    </population>
+    <population name="desperate_masses">
+      <model name="survivee">
+        <include>
+          <static>true</static>
+          <uri>model://person_standing</uri>
+        </include>
+      </model>
+      <pose>0 0 0 0 0 0</pose>
+      <distribution>
+        <type>grid</type>
+        <rows>5</rows>
+        <cols>4</cols>
+        <step>15 15 0</step>
+      </distribution>
+    </population>
+  </world>
+</sdf>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <launch>
-  <arg name="world" default="$(find dji_m100_gazebo)/worlds/dji_test.world"/>
+  <arg name="world" default="$(find dji_m100_gazebo)/worlds/search_and_rescue.world"/>
   <arg name="gui" default="true"/>
   <arg name="verbose" default="false"/>
 

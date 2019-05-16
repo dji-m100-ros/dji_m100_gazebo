@@ -104,7 +104,7 @@ namespace gazebo
                 this->base_link->SetForce(math::Vector3d(0,0,0));
                 this->base_link->SetTorque(math::Vector3d(0,0,0));
                 this->base_orientation.Set(1,0,0,0);
-                this->base_position.Set();
+                this->base_position.Set(0,0,0.2);
                 this->gimbal_orientation.Set();
             }
             void gimbalOrientationCallback(const geometry_msgs::Vector3Stamped::ConstPtr& gimbal_orientation_msg)
@@ -148,7 +148,7 @@ namespace gazebo
                 #endif
                 this->model->SetLinearVel(math::Vector3d(0,0,0));
                 this->model->SetAngularVel(math::Vector3d(0,0,0));
-                this->gimbal_yaw_link->SetWorldPose(gimbal_pose);
+                this->gimbal_yaw_link->SetRelativePose(gimbal_pose);
             }
         private:
             ros::NodeHandle nh;

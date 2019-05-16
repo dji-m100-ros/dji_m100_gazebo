@@ -15,5 +15,7 @@
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
   <export>
+    <gazebo_ros
+          gazebo_model_path="${prefix}/models" />
   </export>
 </package>
