@@ -15,4 +15,4 @@ Clone this repo into your catkin workspace and build.
 **Usage**
 
 Execute the one-liner.
-> $ roslaunch dji_m100_gazebo dji_empty_world.launch
+> $ roslaunch dji_m100_gazebo simulate.launch
