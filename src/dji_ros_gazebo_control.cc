@@ -78,12 +78,12 @@ namespace gazebo
                     this->base_orientation.W() = quat_msg->quaternion.w;
                     this->base_orientation.X() = -quat_msg->quaternion.x;
                     this->base_orientation.Y() = -quat_msg->quaternion.y;
-                    this->base_orientation.Z() = -quat_msg->quaternion.z;
+                    this->base_orientation.Z() = quat_msg->quaternion.z;
                 #else
                     this->base_orientation.w = quat_msg->quaternion.w;
                     this->base_orientation.x = -quat_msg->quaternion.x;
                     this->base_orientation.y = -quat_msg->quaternion.y;
-                    this->base_orientation.z = -quat_msg->quaternion.z;
+                    this->base_orientation.z = quat_msg->quaternion.z;
                 #endif
             }
             void gpsCallback(const sensor_msgs::NavSatFix::ConstPtr& gps_msg)
