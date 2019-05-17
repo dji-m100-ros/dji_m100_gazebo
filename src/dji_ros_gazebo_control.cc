@@ -8,6 +8,7 @@
 
 #include <std_msgs/String.h>
 #include <std_msgs/UInt8.h>
+
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/PointStamped.h>
@@ -16,6 +17,8 @@
 
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
+
+#include <gazebo_msgs/ContactsState.h>
 
 #include <tf/LinearMath/Quaternion.h>
 #include <tf/LinearMath/Matrix3x3.h>
@@ -66,6 +69,12 @@ namespace gazebo
                     ros::VoidPtr(), &this->callback_queue);
                 this->gimbal_orientation_subscriber = nh.subscribe(gimbal_ops);
 
+                ros::SubscribeOptions contact_ops = ros::SubscribeOptions::create<gazebo_msgs::ContactsState>(
+                    this->model->GetName()+"/contact",1000,
+                    boost::bind(&DJI_ROS_ControlPlugin::contactCallback,this,_1),
+                    ros::VoidPtr(),&this->callback_queue);
+                
+                this->contact_subscriber = nh.subscribe(contact_ops);
                 this->spherical_coordinates_handle = this->world->SphericalCoords();
                 
                 
@@ -119,7 +128,23 @@ namespace gazebo
                     this->gimbal_orientation.z = gimbal_orientation_msg->vector.z;
                 #endif
             }
+            void contactCallback(const gazebo_msgs::ContactsState::ConstPtr& contact_msg)
+            {
+                int num_of_contacts = contact_msg->states.size();
+                if(num_of_contacts)//Pause the simulation
+                {
+                    
+                    this->contact = true;
+                    std::cout<<"\033[1;31m Contact information :"<<contact_msg->states[0].info<<"\033[0m\n";
+                }
+            }
             void OnUpdate(){
+                //Early check for contact
+                if(this->contact)
+                {
+                    this->world->SetPaused(true);
+                    return;
+                }
                 this->callback_queue.callAvailable();
                 // Get simulator time
                 #if GAZEBO_MAJOR_VERSION >= 8
@@ -166,6 +191,8 @@ namespace gazebo
             ros::Subscriber gps_position_subscriber;
             ros::Subscriber gimbal_orientation_subscriber;
             
+            ros::Subscriber contact_subscriber;
+            bool contact = false;
             ros::CallbackQueue callback_queue;
             common::Time last_time;
 
