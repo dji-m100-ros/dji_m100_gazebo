@@ -68,14 +68,20 @@ namespace gazebo
                     boost::bind(&DJI_ROS_ControlPlugin::gimbalOrientationCallback, this, _1),
                     ros::VoidPtr(), &this->callback_queue);
                 this->gimbal_orientation_subscriber = nh.subscribe(gimbal_ops);
-
-                ros::SubscribeOptions contact_ops = ros::SubscribeOptions::create<gazebo_msgs::ContactsState>(
-                    this->model->GetName()+"/contact",1000,
-                    boost::bind(&DJI_ROS_ControlPlugin::contactCallback,this,_1),
-                    ros::VoidPtr(),&this->callback_queue);
+                if (_sdf->HasElement("allow_contact_sensing"))
+                    this->contact_allowed = _sdf->GetElement("allow_contact_sensing")->Get<bool>();
                 
-                this->contact_subscriber = nh.subscribe(contact_ops);
+                if(this->contact_allowed)
+                {
+                    ros::SubscribeOptions contact_ops = ros::SubscribeOptions::create<gazebo_msgs::ContactsState>(
+                        this->model->GetName()+"/contact",1000,
+                        boost::bind(&DJI_ROS_ControlPlugin::contactCallback,this,_1),
+                        ros::VoidPtr(),&this->callback_queue);
+                    this->contact_subscriber = nh.subscribe(contact_ops);
+                }    
+                
                 this->spherical_coordinates_handle = this->world->SphericalCoords();
+                
                 
                 
                 this->reset();
@@ -193,6 +199,7 @@ namespace gazebo
             
             ros::Subscriber contact_subscriber;
             bool contact = false;
+            bool contact_allowed = false;
             ros::CallbackQueue callback_queue;
             common::Time last_time;
 
