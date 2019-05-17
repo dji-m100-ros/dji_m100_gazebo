@@ -22,7 +22,7 @@
     <include>
       <uri>model://ground_plane</uri>
     </include>
-    <population name="wall_population">
+    <population name="open_air_jail">
       <model name="wall">
         <include>
           <static>true</static>
