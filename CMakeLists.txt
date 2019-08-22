@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
 	rospy 
 	std_msgs
 	sensor_msgs
+	visualization_msgs
 )
 
 find_package(gazebo REQUIRED)
@@ -26,12 +27,24 @@ link_directories(
 )
 
 add_library(dji_ros_gazebo_control SHARED src/dji_ros_gazebo_control.cc)
+add_executable(cylinder_publisher src/cylinder_publisher.cpp)
+target_link_libraries(cylinder_publisher ${catkin_LIBRARIES})
+
 target_link_libraries(dji_ros_gazebo_control ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 
-if(CMAKE_RELEASE_PREFIX STREQUAL "release")
-	SET(CMAKE_INSTALL_PREFIX /opt/ros/$ENV{ROS_DISTRO})
-	install(DIRECTORY launch
-	  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-	)
-endif()
+install(TARGETS dji_ros_gazebo_control
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
+)
+
+install(DIRECTORY worlds
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
+)
+install(DIRECTORY models
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
+)
