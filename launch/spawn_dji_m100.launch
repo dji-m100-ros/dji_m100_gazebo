@@ -5,6 +5,9 @@
   <arg name="model" default="$(find dji_m100_description)/urdf/dji_m100.urdf.xacro"/>
   <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
 
+  <arg name="is_hitl_model" default="true"/>
+  <arg name="is_collision_enabled" default="false"/>
+
   <arg name="x" default="0.0"/>
   <arg name="y" default="0.0"/>
   <arg name="z" default="0.5"/>
@@ -14,14 +17,16 @@
 
   <arg name="world_frame" default="/world"/>
   <arg name="base_link_frame" default="$(arg tf_prefix)/base_link"/>
-
-  <arg name="controllers" default="
-      controller/position
-      controller/velocity
-      controller/attitude
-      "/>
+  
+  <param name="robot_description" 
+          command="$(find xacro)/xacro '$(arg model)' 
+                      base_link_frame:=$(arg base_link_frame) 
+                      world_frame:=$(arg world_frame)
+                      robot_namespace:=$(arg name)
+                      hitl_model:=$(arg is_hitl_model)
+                      collision_enabled:=$(arg is_collision_enabled)"/>
+  
   <!-- send the robot XML to param server -->
-  <param name="robot_description" command="$(find xacro)/xacro '$(arg model)' base_link_frame:=$(arg base_link_frame) world_frame:=$(arg world_frame)" />
   <param name="tf_prefix" type="string" value="$(arg tf_prefix)" />
   <param name="base_link_frame" type="string" value="$(arg base_link_frame)"/>
   <param name="world_frame" type="string" value="$(arg world_frame)"/>
@@ -59,10 +64,17 @@
     <param name="imu_topic" value="imu" />
   </group>
   
-  <!-- Load controllers: Position, Velocity, Attitude -->
-  <include file="$(find hector_quadrotor_controllers)/launch/controller.launch">
-    <arg name="controllers" value="$(arg controllers)" />
-  </include>
+  <group unless="$(arg is_hitl_model)">
+    <arg name="controllers" default="
+      controller/position
+      controller/velocity
+      controller/attitude
+      "/>
+    <!-- Load controllers: Position, Velocity, Attitude -->
+    <include file="$(find hector_quadrotor_controllers)/launch/controller.launch">
+      <arg name="controllers" value="$(arg controllers)" />
+    </include>
+  </group>
   
 </launch>
 
