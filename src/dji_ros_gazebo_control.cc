@@ -45,6 +45,7 @@ namespace gazebo
                 this->model = _model;
                 this->world = _model->GetWorld();
                 this->base_link = model->GetLink();
+                std::string ns = _model->GetName();
                 this->gimbal_yaw_link = _model->GetLink("gimbal_yaw_link");
 
                 std::cout<<"\033[1;32m Gimbal Yaw link exists : "<<this->gimbal_yaw_link->GetName()<<"\033[0m\n";
@@ -68,9 +69,12 @@ namespace gazebo
                     boost::bind(&DJI_ROS_ControlPlugin::gimbalOrientationCallback, this, _1),
                     ros::VoidPtr(), &this->callback_queue);
                 this->gimbal_orientation_subscriber = nh.subscribe(gimbal_ops);
+
                 if (_sdf->HasElement("allow_contact_sensing"))
                     this->contact_allowed = _sdf->GetElement("allow_contact_sensing")->Get<bool>();
-                
+                if (_sdf->HasElement("initial_height"))
+                    this->initial_height = _sdf->GetElement("initial_height")->Get<double>();
+
                 if(this->contact_allowed)
                 {
                     ros::SubscribeOptions contact_ops = ros::SubscribeOptions::create<gazebo_msgs::ContactsState>(
@@ -81,7 +85,6 @@ namespace gazebo
                 }    
                 
                 this->spherical_coordinates_handle = this->world->SphericalCoords();
-                
                 
                 
                 this->reset();
@@ -119,7 +122,9 @@ namespace gazebo
                 this->base_link->SetForce(math::Vector3d(0,0,0));
                 this->base_link->SetTorque(math::Vector3d(0,0,0));
                 this->base_orientation.Set(1,0,0,0);
-                this->base_position.Set(0,0,0.2);
+                double x = this->base_link->WorldPose().Pos().X();
+                double y = this->base_link->WorldPose().Pos().Y();
+                this->base_position.Set(x,y,this->initial_height);
                 this->gimbal_orientation.Set();
             }
             void gimbalOrientationCallback(const geometry_msgs::Vector3Stamped::ConstPtr& gimbal_orientation_msg)
@@ -200,6 +205,7 @@ namespace gazebo
             ros::Subscriber contact_subscriber;
             bool contact = false;
             bool contact_allowed = false;
+            double initial_height = 0;
             ros::CallbackQueue callback_queue;
             common::Time last_time;
 
