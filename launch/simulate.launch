@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 
 <launch>
-	<arg name="verbose" default="true"/>
-	<include file="$(find dji_m100_gazebo)/launch/start.launch">
-		<arg name="verbose" value="$(arg verbose)"/>
-	</include>
+	<include file= "$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="verbose" value="true"/>
+        <arg name="paused" value="false"/>
+        <arg name="gui" value="true"/>
+    </include>
 	<include file="$(find dji_m100_gazebo)/launch/spawn_drones.launch">
 		<arg name="is_collision_enabled" value="false"/>
 	</include>

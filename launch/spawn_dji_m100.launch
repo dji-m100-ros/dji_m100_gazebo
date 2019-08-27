@@ -71,7 +71,6 @@
     <node name="gimbal_controller_spawner" pkg="controller_manager" type="spawner"
         respawn="false" output="screen" ns="/$(arg name)"
         args="--namespace=/$(arg name)
-            joint_state_controller
             gimbal_position_controller
             --timeout 20">
     </node>
