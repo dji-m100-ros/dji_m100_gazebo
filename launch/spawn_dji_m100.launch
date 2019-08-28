@@ -66,10 +66,10 @@
   
   <group unless="$(arg is_hitl_model)">
     <!-- Load Controllers to ROSparam server -->
-    <rosparam command="load" file="$(find dji_m100_controller_gazebo)/config/gimbal_controllers.yaml" />
+    <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/gimbal_controllers.yaml" />
 
-    <rosparam command="load" file="$(find dji_m100_controller_gazebo)/config/body_controllers.yaml" />
-    <rosparam command="load" file="$(find dji_m100_controller_gazebo)/config/body_params.yaml" />
+    <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/body_controllers.yaml" />
+    <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/body_params.yaml" />
     <!-- Spawn Gimbal Controller -->
     <node name="gimbal_controller_spawner" pkg="controller_manager" type="spawner"
         respawn="false" output="screen" ns="/$(arg name)"
