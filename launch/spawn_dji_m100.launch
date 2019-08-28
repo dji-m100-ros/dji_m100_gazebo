@@ -66,12 +66,21 @@
   
   <group unless="$(arg is_hitl_model)">
     <!-- Load Controllers to ROSparam server -->
-    <rosparam command="load" file="$(find dji_m100_description)/config/controllers.yaml" />
+    <rosparam command="load" file="$(find dji_m100_controller_gazebo)/config/gimbal_controllers.yaml" />
+
+    <rosparam command="load" file="$(find dji_m100_controller_gazebo)/config/body_controllers.yaml" />
+    <rosparam command="load" file="$(find dji_m100_controller_gazebo)/config/body_params.yaml" />
     <!-- Spawn Gimbal Controller -->
     <node name="gimbal_controller_spawner" pkg="controller_manager" type="spawner"
         respawn="false" output="screen" ns="/$(arg name)"
         args="--namespace=/$(arg name)
-            gimbal_position_controller
+            joint_state_controller
+            gimbal_roll_controller
+            gimbal_pitch_controller
+            gimbal_yaw_controller
+            body_position_controller
+            body_velocity_controller
+            body_attitude_controller
             --timeout 20">
     </node>
   </group>

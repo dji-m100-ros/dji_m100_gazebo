@@ -29,25 +29,25 @@
           <uri>model://closed_green_wall</uri>
         </include>
       </model>
-      <pose>0 0 2.25 0 0 0</pose>
+      <pose>0 30 2.25 0 0 0</pose>
       <distribution>
         <type>grid</type>
-        <rows>5</rows>
+        <rows>2</rows>
         <cols>4</cols>
         <step>15 15 0</step>
       </distribution>
     </population>
     <population name="desperate_masses">
-      <model name="survivee">
+      <model name="survivor">
         <include>
           <static>true</static>
           <uri>model://person_standing</uri>
         </include>
       </model>
-      <pose>0 0 0 0 0 0</pose>
+      <pose>0 30 0 0 0 0</pose>
       <distribution>
         <type>grid</type>
-        <rows>5</rows>
+        <rows>2</rows>
         <cols>4</cols>
         <step>15 15 0</step>
       </distribution>

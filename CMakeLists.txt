@@ -4,18 +4,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 find_package(catkin REQUIRED COMPONENTS
 	gazebo_ros
-	roscpp 
-	rospy 
-	std_msgs
-	sensor_msgs
-	visualization_msgs
 )
 
 find_package(gazebo REQUIRED)
 catkin_package(
-	CATKIN_DEPENDS roscpp gazebo_ros
-	LIBRARIES dji_ros_gazebo_control_hitl
-	INCLUDE_DIRS
 )
 
 include_directories(
@@ -24,18 +16,6 @@ include_directories(
 
 link_directories(
 	${GAZEBO_LIRARY_DIRS} ${catkin_LIBRARY_DIRS}
-)
-
-add_library(dji_ros_gazebo_control_hitl SHARED src/dji_ros_gazebo_control_hitl.cc)
-add_executable(cylinder_publisher src/cylinder_publisher.cpp)
-target_link_libraries(cylinder_publisher ${catkin_LIBRARIES})
-
-target_link_libraries(dji_ros_gazebo_control_hitl ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
-
-install(TARGETS dji_ros_gazebo_control_hitl
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 install(DIRECTORY launch
