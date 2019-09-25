@@ -71,7 +71,7 @@
     <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/body_controllers.yaml" />
     <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/body_params.yaml" />
     <!-- Spawn Gimbal Controller -->
-    <node name="gimbal_controller_spawner" pkg="controller_manager" type="spawner"
+    <node name="unified_controller_spawner" pkg="controller_manager" type="spawner"
         respawn="false" output="screen" ns="/$(arg name)"
         args="--namespace=/$(arg name)
             joint_state_controller
