@@ -9,4 +9,5 @@
 	<include file="$(find dji_m100_gazebo)/launch/spawn_drones.launch">
 		<arg name="is_collision_enabled" value="false"/>
 	</include>
+    <node pkg="rviz" type="rviz" name="rviz"/>
 </launch>
