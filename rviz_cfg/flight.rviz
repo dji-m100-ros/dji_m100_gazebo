@@ -6,7 +6,10 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /RobotModel1
+        - /UAV1 Model1
+        - /UAV2 Model1
+        - /UAV3 Model1
+        - /UAV4 Model1
       Splitter Ratio: 0.5
     Tree Height: 549
   - Class: rviz/Selection
@@ -91,9 +94,141 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-      Name: RobotModel
+      Name: UAV1 Model
       Robot Description: uav1/robot_description
       TF Prefix: uav1
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Alpha: 0.5
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        gimbal_pitch_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gimbal_roll_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gimbal_yaw_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: UAV2 Model
+      Robot Description: uav2/robot_description
+      TF Prefix: uav2
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Alpha: 0.5
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        gimbal_pitch_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gimbal_roll_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gimbal_yaw_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: UAV3 Model
+      Robot Description: uav3/robot_description
+      TF Prefix: uav3
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Alpha: 0.5
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        gimbal_pitch_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gimbal_roll_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gimbal_yaw_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: UAV4 Model
+      Robot Description: uav4/robot_description
+      TF Prefix: uav4
       Update Interval: 0
       Value: true
       Visual Enabled: true
@@ -101,7 +236,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: uav1/base_link
+    Fixed Frame: world
     Frame Rate: 30
   Name: root
   Tools:
@@ -125,7 +260,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.295825004577637
+      Distance: 23.51348304748535
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -161,5 +296,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 67
-  Y: 27
+  X: 70
+  Y: 34
