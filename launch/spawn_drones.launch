@@ -5,7 +5,7 @@
     <arg name="initial_y" default="0"/>
     <arg name="initial_z" default="0.5"/>
     <arg name="is_collision_enabled" default="false"/>
-    <group ns="uav1">   
+    <group ns="uav1">
         <include file="$(find dji_m100_gazebo)/launch/spawn_dji_m100.launch" >
             <arg name="name" value="uav1" />
             <arg name="tf_prefix" value="uav1" />
@@ -17,7 +17,6 @@
             <arg name="is_collision_enabled" value="$(arg is_collision_enabled)"/>
         </include>
     </group>
-    
     <group ns="uav2">
         <include file="$(find dji_m100_gazebo)/launch/spawn_dji_m100.launch" >
             <arg name="name" value="uav2" />
@@ -30,7 +29,6 @@
             <arg name="is_collision_enabled" value="$(arg is_collision_enabled)"/>
         </include>
     </group>
-    
     <group ns="uav3">
         <include file="$(find dji_m100_gazebo)/launch/spawn_dji_m100.launch" >
             <arg name="name" value="uav3" />
@@ -43,7 +41,6 @@
             <arg name="is_collision_enabled" value="$(arg is_collision_enabled)"/>
         </include>
     </group>
-    <!--
     <group ns="uav4">
         <include file="$(find dji_m100_gazebo)/launch/spawn_dji_m100.launch" >
             <arg name="name" value="uav4" />
@@ -52,8 +49,10 @@
             <arg name="y" value="$(arg initial_y)" />
             <arg name="z" value="$(arg initial_z)" />
             <arg name="yaw" value="0" />
+            <arg name="is_hitl_model" value="true"/>
+            <arg name="is_collision_enabled" value="$(arg is_collision_enabled)"/>
         </include>
-    </group-->
+    </group>
     <!--group ns="uav5">
         <include file="$(find dji_m100_gazebo)/launch/spawn_dji_m100.launch" >
             <arg name="name" value="uav5" />
