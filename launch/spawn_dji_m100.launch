@@ -15,7 +15,10 @@
 
   <arg name="world_frame" default="/world"/>
   <arg name="base_link_frame" default="$(arg tf_prefix)/base_link"/>
-
+  <rosparam param="camera/dji_sdk/image_raw/disable_pub_plugins">
+      - 'image_transport/compressedDepth'
+      - 'image_transport/theora'
+  </rosparam>
   <param name="robot_description"
           command="$(find xacro)/xacro '$(arg model)'
                       base_link_frame:=$(arg base_link_frame)
