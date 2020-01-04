@@ -3,7 +3,8 @@ project(dji_m100_gazebo)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 find_package(catkin REQUIRED COMPONENTS
-	gazebo_ros
+  gazebo_ros
+  rviz_visual_tools
 )
 
 find_package(gazebo REQUIRED)
@@ -17,6 +18,9 @@ include_directories(
 link_directories(
 	${GAZEBO_LIRARY_DIRS} ${catkin_LIBRARY_DIRS}
 )
+
+add_executable(rviz_collision_publisher src/rviz_collision_publisher.cpp)
+target_link_libraries(rviz_collision_publisher ${catkin_LIBRARIES})
 
 install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
