@@ -18,7 +18,9 @@ int main(int argc, char **argv) {
 
   gazebo_msgs::GetModelState get_model_state;
   std::vector<geometry_msgs::Point> sphere_centers;
-  for (int i = 0; i < 20; i++) {
+  int nr_of_obstacles;
+  nh.getParam("nr_of_obstacles",nr_of_obstacles);
+  for (int i = 0; i < nr_of_obstacles; i++) {
     std::string sphere = "collision_sphere_clone_" + std::to_string(i);
     get_model_state.request.model_name = sphere;
     if (gazebo_client.call(get_model_state)) {

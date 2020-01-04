@@ -33,7 +33,7 @@
       <box>
         <size>50 50 20</size>
       </box>
-      <model_count>20</model_count>
+      <model_count>100</model_count>
       <distribution>
         <type>random</type>
       </distribution>
