@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
   visual_tools_->loadMarkerPub();
   visual_tools_->waitForMarkerPub();
   visual_tools_->setLifetime(0);
-  visual_tools_->publishSpheres(sphere_centers, rviz_visual_tools::MAGENTA, radius,
+  visual_tools_->publishSpheres(sphere_centers, rviz_visual_tools::MAGENTA, radius*2.0,
                                 "Obstacles");
   visual_tools_->trigger();
   ros::Duration(1.0).sleep();
