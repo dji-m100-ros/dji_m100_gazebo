@@ -6,6 +6,12 @@
             <sunset>20</sunset>
         </sky>
     </scene>
+    <physics type='ode'>
+      <max_step_size>0.01</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>100</real_time_update_rate>
+      <gravity>0 0 -9.8</gravity>
+    </physics>
     <spherical_coordinates>
         <surface_model>EARTH_WGS84</surface_model>
         <world_frame_orientation>ENU</world_frame_orientation>
