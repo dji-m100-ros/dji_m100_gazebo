@@ -22,6 +22,12 @@ link_directories(
 add_executable(rviz_collision_publisher src/rviz_collision_publisher.cpp)
 target_link_libraries(rviz_collision_publisher ${catkin_LIBRARIES})
 
+install(TARGETS rviz_collision_publisher
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
 )
