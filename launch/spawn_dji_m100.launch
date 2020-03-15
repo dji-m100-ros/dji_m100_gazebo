@@ -53,9 +53,10 @@
 
   <!-- publish state and tf -->
   <node name="ground_truth_to_tf" pkg="message_to_tf" type="message_to_tf" output="screen">
-    <param name="odometry_topic" value="/$(arg name)/pose_gt" />
+    <param name="odometry_topic" value="/$(arg name)/odometry" />
     <param name="frame_id" value="$(arg world_frame)" />
     <param name="tf_prefix" value="$(arg tf_prefix)"/>
+    <remap from="ground_truth_to_tf/pose" to="pose"/>
   </node>
 
   <group unless="$(arg is_hitl_model)">
@@ -77,6 +78,10 @@
             body_attitude_controller
             --timeout 20">
     </node>
+
+    <!-- load actions -->
+  <include file="$(find hector_quadrotor_actions)/launch/actions.launch" />
+  <node name="trajectory_controller" pkg="starmac" type="trajectory_controller" respawn="false" output="screen"/>
   </group>
 
 </launch>
