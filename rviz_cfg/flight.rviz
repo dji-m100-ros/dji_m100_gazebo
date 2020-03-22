@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /UAV1 Model1
         - /Obstacles1
+        - /UAV1 Odometry1
       Splitter Ratio: 0.5
     Tree Height: 730
   - Class: rviz/Selection
@@ -279,7 +280,7 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 100
+      Keep: 0
       Name: UAV1 Odometry
       Position Tolerance: 0.100000001
       Shape:
@@ -320,25 +321,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 51.2742653
+      Distance: 58.1085892
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -1.40998042
-        Y: 1.4140029
+        X: -0.994686842
+        Y: 2.03631186
         Z: 0
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 1.08479679
+      Pitch: 0.159797192
       Target Frame: <Fixed Frame>
       Value: ThirdPersonFollower (rviz)
-      Yaw: 5.03360462
+      Yaw: 5.14360619
     Saved: ~
 Window Geometry:
   Displays:
