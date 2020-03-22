@@ -25,7 +25,8 @@
                       world_frame:=$(arg world_frame)
                       robot_namespace:=$(arg name)
                       hitl_model:=$(arg is_hitl_model)
-                      collision_enabled:=$(arg is_collision_enabled)"/>
+                      collision_enabled:=$(arg is_collision_enabled)
+                      rotors_controlled:=$(arg is_rotors_controlled)"/>
 
   <!-- send the robot XML to param server -->
   <param name="tf_prefix" type="string" value="$(arg tf_prefix)" />
@@ -60,35 +61,35 @@
   </node>
 
   <group unless="$(arg is_hitl_model)">
-    <!-- Load Controllers to ROSparam server -->
-    <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/gimbal_controllers.yaml" />
+    <group if="$(arg is_rotors_controlled)">
+      <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+        <rosparam command="load" file="$(find dji_m100_gazebo)/resource/lee_controller_dji_m100.yaml" />
+        <rosparam command="load" file="$(find dji_m100_gazebo)/resource/dji_m100.yaml" />
+      </node>
+    </group>
+    <group unless="$(arg is_rotors_controlled)">
+      <!-- Load Controllers to ROSparam server -->
+      <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/gimbal_controllers.yaml" />
 
-    <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/body_controllers.yaml" />
-    <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/body_params.yaml" />
-    <!-- Spawn Gimbal Controller -->
-    <node name="unified_controller_spawner" pkg="controller_manager" type="spawner"
-        respawn="false" output="screen" ns="/$(arg name)"
-        args="--namespace=/$(arg name)
-            joint_state_controller
-            gimbal_roll_controller
-            gimbal_pitch_controller
-            gimbal_yaw_controller
-            body_position_controller
-            body_velocity_controller
-            body_attitude_controller
-            --timeout 20">
-    </node>
-  </group>
-  <group if="$(arg is_rotors_controlled)">
-    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
-      <rosparam command="load" file="$(find dji_m100_gazebo)/resource/lee_controller_dji_m100.yaml" />
-      <rosparam command="load" file="$(find dji_m100_gazebo)/resource/dji_m100.yaml" />
-    </node>
-  </group>
-  <group unless="$(arg is_rotors_controlled)">
-    <!-- load actions -->
-    <include file="$(find hector_quadrotor_actions)/launch/actions.launch" />
-    <node name="trajectory_controller" pkg="starmac" type="trajectory_controller" respawn="false" output="screen"/>
+      <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/body_controllers.yaml" />
+      <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/body_params.yaml" />
+      <!-- Spawn Gimbal Controller -->
+      <node name="unified_controller_spawner" pkg="controller_manager" type="spawner"
+          respawn="false" output="screen" ns="/$(arg name)"
+          args="--namespace=/$(arg name)
+              joint_state_controller
+              gimbal_roll_controller
+              gimbal_pitch_controller
+              gimbal_yaw_controller
+              body_position_controller
+              body_velocity_controller
+              body_attitude_controller
+              --timeout 20">
+      </node>
+      <!-- load actions -->
+      <include file="$(find hector_quadrotor_actions)/launch/actions.launch" />
+      <node name="trajectory_controller" pkg="starmac" type="trajectory_controller" respawn="false" output="screen"/>
+    </group>
   </group>
 </launch>
 

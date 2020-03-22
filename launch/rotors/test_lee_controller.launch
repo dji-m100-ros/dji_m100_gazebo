@@ -1,8 +1,10 @@
 <launch>
+  <arg name="world_name" default="basic"/>
+
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find rotors_gazebo)/worlds/$(arg world_name).world" />
     <arg name="paused" value="true"/>
     <arg name="verbose" value="true"/>
-    <arg name="gui" value="true"/>
   </include>
 
   <group ns="uav1">
@@ -10,6 +12,7 @@
       <arg name="name" value="uav1" />
       <arg name="model" value="$(find dji_m100_description)/urdf/rotors/dji_m100.urdf.xacro"/>
       <arg name="is_rotors_controlled" value="true"/>
+      <arg name="is_hitl_model" value="false"/>
     </include>
     <node name="hovering_example" pkg="rotors_gazebo" type="hovering_example" output="screen"/>
     <node name="waypoint_publisher" pkg="rotors_gazebo" type="waypoint_publisher" output="screen"/>
