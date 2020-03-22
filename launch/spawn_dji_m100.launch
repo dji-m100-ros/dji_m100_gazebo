@@ -4,6 +4,7 @@
   <arg name="name" default="dji_m100"/>
   <arg name="model" default="$(find dji_m100_description)/urdf/dji_m100.urdf.xacro"/>
   <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
+  <arg name="is_rotors_controlled" default="false"/>
 
   <arg name="is_hitl_model" default="true"/>
   <arg name="is_collision_enabled" default="false"/>
@@ -21,7 +22,6 @@
   </rosparam>
   <param name="robot_description"
           command="$(find xacro)/xacro '$(arg model)'
-                      base_link_frame:=$(arg base_link_frame)
                       world_frame:=$(arg world_frame)
                       robot_namespace:=$(arg name)
                       hitl_model:=$(arg is_hitl_model)
@@ -78,11 +78,17 @@
             body_attitude_controller
             --timeout 20">
     </node>
-
-    <!-- load actions -->
-  <include file="$(find hector_quadrotor_actions)/launch/actions.launch" />
-  <node name="trajectory_controller" pkg="starmac" type="trajectory_controller" respawn="false" output="screen"/>
   </group>
-
+  <group if="$(arg is_rotors_controlled)">
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find dji_m100_gazebo)/resource/lee_controller_dji_m100.yaml" />
+      <rosparam command="load" file="$(find dji_m100_gazebo)/resource/dji_m100.yaml" />
+    </node>
+  </group>
+  <group unless="$(arg is_rotors_controlled)">
+    <!-- load actions -->
+    <include file="$(find hector_quadrotor_actions)/launch/actions.launch" />
+    <node name="trajectory_controller" pkg="starmac" type="trajectory_controller" respawn="false" output="screen"/>
+  </group>
 </launch>
 
