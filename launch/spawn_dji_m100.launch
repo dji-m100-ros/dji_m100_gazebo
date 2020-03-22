@@ -20,13 +20,16 @@
       - 'image_transport/compressedDepth'
       - 'image_transport/theora'
   </rosparam>
+  <arg name="gazebo_major_version" value="$(eval env('GAZEBO_MAJOR_VERSION'))"/>
+  <arg name="complex_visualization_supported" value="$(eval arg('gazebo_major_version') > 7 )"/>
   <param name="robot_description"
           command="$(find xacro)/xacro '$(arg model)'
                       world_frame:=$(arg world_frame)
                       robot_namespace:=$(arg name)
                       hitl_model:=$(arg is_hitl_model)
                       collision_enabled:=$(arg is_collision_enabled)
-                      rotors_controlled:=$(arg is_rotors_controlled)"/>
+                      rotors_controlled:=$(arg is_rotors_controlled)
+                      complex_visualization_supported:=$(arg complex_visualization_supported)"/>
 
   <!-- send the robot XML to param server -->
   <param name="tf_prefix" type="string" value="$(arg tf_prefix)" />
