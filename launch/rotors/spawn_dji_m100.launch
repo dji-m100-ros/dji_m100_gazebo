@@ -2,7 +2,7 @@
 
 <launch>
   <arg name="namespace" default="dji_m100"/>
-  <arg name="model" value="$(find dji_m100_description)/urdf/rotors/dji_m100_with_odometry.xacro"/>
+  <arg name="model" value="$(find dji_m100_description)/urdf/rotors/dji_m100.urdf.xacro"/>
   <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
   <arg name="x" default="0.0"/>
   <arg name="y" default="0.0"/>
