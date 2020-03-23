@@ -11,7 +11,6 @@
     <include file="$(find dji_m100_gazebo)/launch/spawn_dji_m100.launch">
       <arg name="name" value="uav1" />
       <arg name="tf_prefix" value="uav1" />
-      <arg name="model" value="$(find dji_m100_description)/urdf/rotors/dji_m100.urdf.xacro"/>
       <arg name="is_rotors_controlled" value="true"/>
       <arg name="is_hitl_model" value="false"/>
     </include>
