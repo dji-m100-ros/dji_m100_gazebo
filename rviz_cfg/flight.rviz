@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /UAV1 Model1
+        - /UAV1 Model1/Status1
         - /Obstacles1
         - /UAV1 Odometry1
         - /TF1/Frames1
@@ -95,7 +96,7 @@ Visualization Manager:
           Value: true
       Name: UAV1 Model
       Robot Description: uav1/robot_description
-      TF Prefix: ""
+      TF Prefix: uav1
       Update Interval: 0
       Value: true
       Visual Enabled: true
