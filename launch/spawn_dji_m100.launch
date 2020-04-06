@@ -20,7 +20,7 @@
       - 'image_transport/compressedDepth'
       - 'image_transport/theora'
   </rosparam>
-  <arg name="gazebo_major_version" value="$(eval env('GAZEBO_MAJOR_VERSION'))"/>
+  <arg name="gazebo_major_version" value="$(eval optenv('GAZEBO_MAJOR_VERSION', 9.0))"/>
   <arg name="complex_visualization_supported" value="$(eval arg('gazebo_major_version') > 7 )"/>
   <param name="robot_description"
           command="$(find xacro)/xacro '$(arg model)'
@@ -51,9 +51,6 @@
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
     <param name="publish_frequency" type="double" value="50.0" />
   </node>
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="use_gui" value="False"/>
-  </node>
 
   <!-- publish state and tf -->
   <node name="ground_truth_to_tf" pkg="message_to_tf" type="message_to_tf" output="screen">
@@ -62,21 +59,30 @@
     <param name="tf_prefix" value="$(arg tf_prefix)"/>
     <remap from="ground_truth_to_tf/pose" to="pose"/>
   </node>
-
   <group unless="$(arg is_hitl_model)">
+
+    <!-- Load Gimbal Controllers to ROSparam server -->
+    <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/gimbal_controllers.yaml" />
     <group if="$(arg is_rotors_controlled)">
       <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
         <rosparam command="load" file="$(find dji_m100_gazebo)/resource/lee_controller_dji_m100.yaml" />
         <rosparam command="load" file="$(find dji_m100_gazebo)/resource/dji_m100.yaml" />
       </node>
+      <!-- Spawn Gimbal Controller -->
+      <node name="gimbal_controller_spawner" pkg="controller_manager" type="spawner"
+          respawn="false" output="screen" ns="/$(arg name)"
+          args="--namespace=/$(arg name)
+              joint_state_controller
+              gimbal_roll_controller
+              gimbal_pitch_controller
+              gimbal_yaw_controller
+              --timeout 20">
+      </node>
     </group>
     <group unless="$(arg is_rotors_controlled)">
-      <!-- Load Controllers to ROSparam server -->
-      <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/gimbal_controllers.yaml" />
-
       <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/body_controllers.yaml" />
       <rosparam command="load" file="$(find dji_m100_controllers_gazebo)/config/body_params.yaml" />
-      <!-- Spawn Gimbal Controller -->
+      <!-- Spawn Body + Gimbal Controllers -->
       <node name="unified_controller_spawner" pkg="controller_manager" type="spawner"
           respawn="false" output="screen" ns="/$(arg name)"
           args="--namespace=/$(arg name)
