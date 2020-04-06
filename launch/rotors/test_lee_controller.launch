@@ -2,7 +2,7 @@
   <arg name="world_name" default="basic"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find rotors_gazebo)/worlds/$(arg world_name).world" />
+    <arg name="world_name" value="$(find dji_m100_gazebo)/worlds/search_and_rescue.world"/>
     <arg name="paused" value="true"/>
     <arg name="verbose" value="true"/>
   </include>

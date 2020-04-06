@@ -6,6 +6,7 @@
             <sunset>20</sunset>
         </sky>
     </scene>
+    <plugin name="ros_interface_plugin" filename="librotors_gazebo_ros_interface_plugin.so"/>
     <physics type='ode'>
       <max_step_size>0.01</max_step_size>
       <real_time_factor>1</real_time_factor>
