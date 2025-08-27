@@ -1,0 +1,4 @@
+- git:
+    local-name: src/starmac
+    uri: https://github.com/tahsinkose/Hector-Quadrotor-Aggressive-Flight.git
+    version: master
