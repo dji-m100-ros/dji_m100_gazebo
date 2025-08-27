@@ -10,6 +10,8 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <depend>gazebo_ros</depend>
+  <depend>rviz_visual_tools</depend>
+  <exec_depend>starmac</exec_depend>
   <export>
     <gazebo_ros
           gazebo_model_path="${prefix}/models" />
